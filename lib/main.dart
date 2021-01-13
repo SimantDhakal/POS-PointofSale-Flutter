@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 import 'package:pos/POSModel.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -148,10 +149,11 @@ class _MyHomePageState extends State<MyHomePage> {
   /// tap on printer
   Future<void> printDemoReceipt(NetworkPrinter printer) async {
 
-    final ByteData data = await rootBundle.load('assets/rabbit_black.jpg');
-    final Uint8List bytes = data.buffer.asUint8List();
-    final Image image = decodeImage(bytes);
-    printer.image(image);
+    /// local image import
+    // final ByteData data = await rootBundle.load('assets/rabbit_black.jpg');
+    // final Uint8List bytes = data.buffer.asUint8List();
+    // final Image image = decodeImage(bytes);
+    // printer.image(image);
 
     // Uint8List hsn = (await NetworkAssetBundle(Uri.parse("https://demostore.mydopako.com/api/upload/demostore/ecommerce/1592140071.png"))
     //     .load("https://demostore.mydopako.com/api/upload/demostore/ecommerce/1592140071.png"))
@@ -160,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // final Image image = decodeImage(hsn);
     // printer.image(image);
 
-    printer.text('GROCERYLY',
+    printer.text('Dopako Shop',
         styles: PosStyles(
           align: PosAlign.center,
           height: PosTextSize.size2,
@@ -168,18 +170,18 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         linesAfter: 1);
 
-    printer.text('889  Watson Lane', styles: PosStyles(align: PosAlign.center));
-    printer.text('New Braunfels, TX',
+    printer.text('18 Gaurighat', styles: PosStyles(align: PosAlign.center));
+    printer.text('New Baneshwor, Kathmandu',
         styles: PosStyles(align: PosAlign.center));
-    printer.text('Tel: 830-221-1234',
+    printer.text('Tel: 9861169270',
         styles: PosStyles(align: PosAlign.center));
-    printer.text('Web: www.example.com',
+    printer.text('Web: www.dopako.com',
         styles: PosStyles(align: PosAlign.center), linesAfter: 1);
 
     printer.hr();
     printer.row([
-      PosColumn(text: 'Qty', width: 1),
-      PosColumn(text: 'Item', width: 7),
+      PosColumn(text: 'Qty', width: 1, styles: PosStyles(align: PosAlign.left)),
+      PosColumn(text: 'Item', width: 7, styles: PosStyles(align: PosAlign.left)),
       PosColumn(
           text: 'Price', width: 2, styles: PosStyles(align: PosAlign.right)),
       PosColumn(
@@ -197,25 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
             text: total[i], width: 2, styles: PosStyles(align: PosAlign.right)),
       ]);
     }
-    printer.hr();
-
-    printer.row([
-      PosColumn(
-          text: _grandTotal.toString(),
-          width: 6,
-          styles: PosStyles(
-            height: PosTextSize.size2,
-            width: PosTextSize.size2,
-          )),
-      PosColumn(
-          text: '\$10.97',
-          width: 6,
-          styles: PosStyles(
-            align: PosAlign.right,
-            height: PosTextSize.size2,
-            width: PosTextSize.size2,
-          )),
-    ]);
+    // printer.hr();
 
     printer.hr(ch: '=', linesAfter: 1);
 
@@ -225,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
           width: 8,
           styles: PosStyles(align: PosAlign.right, width: PosTextSize.size2)),
       PosColumn(
-          text: '\$15.00',
+          text: '\$'+_grandTotal,
           width: 4,
           styles: PosStyles(align: PosAlign.right, width: PosTextSize.size2)),
     ]);
@@ -250,29 +234,6 @@ class _MyHomePageState extends State<MyHomePage> {
     printer.text(timestamp,
         styles: PosStyles(align: PosAlign.center), linesAfter: 2);
 
-    // Print QR Code from image
-    // try {
-    //   const String qrData = 'example.com';
-    //   const double qrSize = 200;
-    //   final uiImg = await QrPainter(
-    //     data: qrData,
-    //     version: QrVersions.auto,
-    //     gapless: false,
-    //   ).toImageData(qrSize);
-    //   final dir = await getTemporaryDirectory();
-    //   final pathName = '${dir.path}/qr_tmp.png';
-    //   final qrFile = File(pathName);
-    //   final imgFile = await qrFile.writeAsBytes(uiImg.buffer.asUint8List());
-    //   final img = decodeImage(imgFile.readAsBytesSync());
-
-    //   printer.image(img);
-    // } catch (e) {
-    //   print(e);
-    // }
-
-    // Print QR Code using native function
-    // printer.qrcode('example.com');
-
     printer.feed(1);
     printer.cut();
   }
@@ -280,8 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// this method is created to print
   void testPrint(String printerIp, BuildContext ctx) async {
     // TODO Don't forget to choose printer's paper size
-    // const PaperSize paper = PaperSize.mm80;
-    const PaperSize paper = PaperSize.mm58;
+    const PaperSize paper = PaperSize.mm80;
     final profile = await CapabilityProfile.load();
     final printer = NetworkPrinter(paper, profile);
 
